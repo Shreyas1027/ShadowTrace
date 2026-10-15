@@ -1,0 +1,32 @@
+# Python
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+.eslintcache
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Backend runtime storage
+backend/tmp/
+tmp/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

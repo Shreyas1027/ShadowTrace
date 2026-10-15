@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --canvas: #FDFBF7;
+  --glow-peach: #FFF8ED;
+  --surface: #FFFFFF;
+  --border-soft: rgba(0, 0, 0, 0.04);
+  --ink: #0F172A;
+  --ink-muted: #64748B;
+  --accent: #F59E0B;
+  --accent-strong: #D97706;
+}
+
+body {
+  background-color: #FDFBF7;
+  background-image:
+    radial-gradient(60rem 40rem at 0% 0%,   #FFF8ED 0%, transparent 60%),
+    radial-gradient(50rem 36rem at 100% 0%, rgba(253,230,138,0.25) 0%, transparent 60%),
+    radial-gradient(60rem 40rem at 100% 100%, #FFF8ED 0%, transparent 60%);
+  background-attachment: fixed;
+  color: #0F172A;
+  min-height: 100vh;
+}
