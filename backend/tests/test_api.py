@@ -110,3 +110,67 @@ def test_safe_logging_filter():
     assert log_filter.filter(record) is True
     assert sample_token not in record.msg
     assert "\n" not in record.msg
+
+
+def test_post_analyze_no_file(client):
+    """POST /api/analyze without file part returns 400 NO_FILE."""
+    response = client.post("/api/analyze", data={})
+    assert response.status_code == 400
+    data = response.get_json()
+    assert data["ok"] is False
+    assert data["error"]["code"] == "NO_FILE"
+
+
+def test_post_analyze_success(client):
+    """POST /api/analyze with valid JPEG returns complete PRD Section 6.2 schema."""
+    import io
+    from PIL import Image
+
+    buf = io.BytesIO()
+    img = Image.new("RGB", (300, 200), (255, 128, 0))
+    img.save(buf, format="JPEG")
+    jpeg_bytes = buf.getvalue()
+
+    response = client.post(
+        "/api/analyze",
+        data={"image": (io.BytesIO(jpeg_bytes), "test_upload.jpg")},
+        content_type="multipart/form-data",
+    )
+
+    assert response.status_code == 200
+    data = response.get_json()
+
+    assert data["ok"] is True
+    assert "token" in data
+    assert len(data["token"]) == 43
+    assert data["ttl_seconds"] == 600
+
+    # File properties
+    assert data["file"]["width"] == 300
+    assert data["file"]["height"] == 200
+    assert data["file"]["format"] == "JPEG"
+
+    # Risk evaluation structure
+    risk = data["risk"]
+    assert "level" in risk
+    assert "score" in risk
+    assert "flags" in risk
+    assert "reasons" in risk
+
+    # GPS structure
+    assert data["gps"]["present"] is False
+    assert data["gps"]["valid"] is False
+
+    # Metadata categories
+    metadata = data["metadata"]
+    assert "location" in metadata
+    assert "capture" in metadata
+    assert "device" in metadata
+    assert "image" in metadata
+
+    # Clean up created session
+    token = data["token"]
+    del_resp = client.delete(f"/api/session/{token}")
+    assert del_resp.status_code == 200
+    assert del_resp.get_json()["deleted"] is True
+

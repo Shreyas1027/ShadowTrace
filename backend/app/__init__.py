@@ -4,6 +4,8 @@ from app.config import config
 from app.utils.logging_safe import setup_safe_logging
 from app.utils.errors import register_error_handlers
 from app.routes.health import health_bp
+from app.routes.analyze import analyze_bp
+from app.routes.session import session_bp
 
 
 def create_app(config_override=None):
@@ -57,5 +59,7 @@ def create_app(config_override=None):
 
     # Register blueprints
     app.register_blueprint(health_bp, url_prefix="/api")
+    app.register_blueprint(analyze_bp, url_prefix="/api")
+    app.register_blueprint(session_bp, url_prefix="/api")
 
     return app
