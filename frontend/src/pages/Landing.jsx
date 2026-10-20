@@ -18,118 +18,107 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
-function MetadataPreviewCard() {
+function InteractiveScannerVisual() {
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-float p-6 sm:p-7 relative transition duration-200 hover:-translate-y-0.5">
+    <Link
+      to="/scanner"
+      className="group block bg-white rounded-3xl border border-slate-100 shadow-float p-4 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+    >
       {/* Card Header */}
-      <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-100/60">
-            <Camera className="h-5 w-5" />
+      <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 px-1">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600 border border-amber-100/60 shadow-2xs">
+            <Camera className="h-4 w-4" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-slate-900">IMG_4821.JPG</span>
-              <span className="text-[11px] text-slate-400 font-mono">3.4 MB</span>
+              <span className="text-xs font-bold text-slate-900">IMG_4821.JPG</span>
+              <span className="text-[10px] text-slate-400 font-mono">3.4 MB · 4032×3024</span>
             </div>
-            <p className="text-[11px] text-slate-500">Live Metadata Inspection Preview</p>
+            <p className="text-[10px] text-slate-500">Live Metadata Detection HUD</p>
           </div>
         </div>
 
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 text-rose-700 px-3 py-1 text-xs font-semibold border border-rose-100">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 text-rose-700 px-2.5 py-0.5 text-[11px] font-semibold border border-rose-100">
           <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
           High Risk Detected
         </span>
       </div>
 
-      {/* Simulated Metadata Tags */}
-      <div className="space-y-3">
-        {/* Tag 1: GPS Coordinates */}
-        <div className="rounded-2xl border border-rose-100 bg-rose-50/50 p-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-700">
-              <MapPin className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-900">GPS Coordinates</span>
-                <span className="text-[10px] font-mono text-rose-700 bg-rose-100/80 px-1.5 py-0.2 rounded font-semibold">
-                  EXIF GPS
-                </span>
-              </div>
-              <p className="text-xs font-mono text-slate-600 truncate mt-0.5">
-                47.6204° N, 122.3494° W · 56.4 m
-              </p>
-            </div>
-          </div>
-          <span className="shrink-0 text-[10px] font-semibold text-rose-700 bg-white px-2.5 py-1 rounded-full border border-rose-100 shadow-2xs">
-            Exposes Address
-          </span>
+      {/* Image Showcase Container with Laser Beam and HUD Badges */}
+      <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-slate-950 shadow-inner">
+        {/* High-quality scenic photo (Seattle skyline with Space Needle matching GPS coordinates) */}
+        <img
+          src="https://images.unsplash.com/photo-1502175353174-a7a70e73b362?auto=format&fit=crop&w=1000&q=80"
+          alt="Seattle Space Needle photo with embedded privacy metadata"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter brightness-[0.92]"
+          loading="eager"
+        />
+
+        {/* Ambient Dark Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-slate-950/40 pointer-events-none" />
+
+        {/* Dynamic Glowing Amber Scan Beam (Continuous CSS Animation) */}
+        <div className="absolute left-0 right-0 z-20 pointer-events-none animate-scan-laser">
+          <div className="h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent shadow-[0_0_15px_rgba(245,158,11,0.8)]" />
+          <div className="h-14 w-full bg-gradient-to-b from-amber-400/10 to-transparent -translate-y-full" />
         </div>
 
-        {/* Tag 2: Capture Timestamp */}
-        <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
-              <Clock className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-900">DateTimeOriginal</span>
-                <span className="text-[10px] font-mono text-amber-800 bg-amber-100/80 px-1.5 py-0.2 rounded font-semibold">
-                  Capture Time
-                </span>
-              </div>
-              <p className="text-xs font-mono text-slate-600 truncate mt-0.5">
-                2026-10-12 18:41:07 UTC
-              </p>
-            </div>
+        {/* Overlay Privacy Pin 1: Timestamp Chip (Top Right) */}
+        <div className="absolute top-3 right-3 z-10 pointer-events-none">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-white border border-white/20 shadow-md text-[11px] font-mono">
+            <Clock className="h-3 w-3 text-amber-400 shrink-0" />
+            <span>🕒 Oct 12, 18:41 UTC</span>
           </div>
-          <span className="shrink-0 text-[10px] font-semibold text-amber-800 bg-white px-2.5 py-1 rounded-full border border-amber-100 shadow-2xs">
-            Reveals Routine
-          </span>
         </div>
 
-        {/* Tag 3: Hardware Signature */}
-        <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-200 text-slate-700">
-              <Smartphone className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-900">Camera Device</span>
-                <span className="text-[10px] font-mono text-slate-600 bg-slate-200 px-1.5 py-0.2 rounded font-semibold">
-                  Hardware
-                </span>
-              </div>
-              <p className="text-xs font-mono text-slate-600 truncate mt-0.5">
-                Apple iPhone 15 Pro · iOS 17.5.1
-              </p>
-            </div>
+        {/* Overlay Privacy Pin 2: Pulsing Red GPS Tag in Center with Radar-Ping Circle */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none flex flex-col items-center">
+          {/* Radar Ping Target */}
+          <div className="relative flex items-center justify-center mb-1.5">
+            <span className="absolute h-9 w-9 rounded-full bg-rose-500/40 animate-ping" />
+            <span className="absolute h-6 w-6 rounded-full bg-rose-500/20" />
+            <span className="relative flex h-3.5 w-3.5 rounded-full bg-rose-600 border-2 border-white shadow-lg items-center justify-center" />
           </div>
-          <span className="shrink-0 text-[10px] font-semibold text-slate-600 bg-white px-2.5 py-1 rounded-full border border-slate-200 shadow-2xs">
-            Device Fingerprint
+
+          {/* GPS Badge */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-md text-white border border-rose-500/60 shadow-xl text-[11px] font-mono whitespace-nowrap">
+            <MapPin className="h-3.5 w-3.5 text-rose-400 shrink-0" />
+            <span className="font-semibold text-rose-100">📍 47.6204° N, 122.3494° W</span>
+            <span className="text-slate-400 font-sans font-normal">(Seattle, WA)</span>
+          </div>
+        </div>
+
+        {/* Overlay Privacy Pin 3: Glassmorphic Tag (Bottom Left) */}
+        <div className="absolute bottom-3 left-3 z-10 pointer-events-none">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 backdrop-blur-md text-white border border-white/20 shadow-lg text-[11px]">
+            <Camera className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+            <span className="font-semibold text-slate-100">📷 Apple iPhone 15 Pro</span>
+            <span className="text-slate-400 font-mono text-[10px]">· 24mm f/1.78</span>
+          </div>
+        </div>
+
+        {/* Interactive Hover Overlay: Smooth Transition Badge */}
+        <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30 flex items-center justify-center backdrop-blur-[2px]">
+          <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-slate-950 font-bold text-xs shadow-2xl transform translate-y-3 group-hover:translate-y-0 transition-all duration-300">
+            <span>Click to test your own photo</span>
+            <ArrowRight className="h-4 w-4 text-amber-600" />
           </span>
         </div>
       </div>
 
-      {/* Bottom Stripping Action Callout */}
-      <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs text-slate-600">
-          <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-          <span>ShadowTrace strips all 14 embedded tags losslessly</span>
+      {/* Card Footer */}
+      <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs px-1">
+        <div className="flex items-center gap-1.5 text-slate-500 text-[11px]">
+          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+          <span>Real-time EXIF detection & lossless scrubbing</span>
         </div>
-
-        <Link
-          to="/scanner"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 hover:text-amber-700 transition"
-        >
-          <span>Try on yours</span>
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+        <span className="text-[11px] font-semibold text-amber-600 group-hover:text-amber-700 flex items-center gap-1 transition">
+          <span>Try scanner</span>
+          <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+        </span>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -213,9 +202,9 @@ export default function Landing() {
             </div>
           </div>
 
-          {/* Right Column: Illustrative Card showing what metadata looks like */}
+          {/* Right Column: Interactive Animated Scanner Visual */}
           <div className="lg:col-span-5 w-full">
-            <MetadataPreviewCard />
+            <InteractiveScannerVisual />
           </div>
         </div>
       </section>

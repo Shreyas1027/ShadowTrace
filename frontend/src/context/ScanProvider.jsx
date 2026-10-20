@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
-import { analyzeImage, deleteSession } from '../api/client';
+import { analyzeImage, cleanImage, deleteSession } from '../api/client';
 import { getFriendlyErrorMessage } from '../utils/errorMessages';
 
 const ScanContext = createContext(null);
@@ -155,13 +155,53 @@ export function ScanProvider({ children }) {
     }
   }, [state.file, validateFile]);
 
-  const reset = useCallback(() => {
-    if (currentTokenRef.current) {
-      deleteSession(currentTokenRef.current);
+  const startClean = useCallback(async () => {
+    const token = state.token || currentTokenRef.current;
+    if (!token) return null;
+
+    setState((prev) => ({
+      ...prev,
+      status: 'cleaning',
+      error: null,
+    }));
+
+    try {
+      const data = await cleanImage(token);
+      setState((prev) => ({
+        ...prev,
+        status: 'cleaned',
+        cleanResult: data,
+        error: null,
+      }));
+      return data;
+    } catch (err) {
+      const code = err.code || 'UNKNOWN_ERROR';
+      const friendlyMessage = getFriendlyErrorMessage(code, err.message);
+
+      setState((prev) => ({
+        ...prev,
+        status: 'error',
+        error: {
+          code,
+          message: friendlyMessage,
+        },
+      }));
+      throw err;
+    }
+  }, [state.token]);
+
+  const reset = useCallback(async () => {
+    const token = currentTokenRef.current || state.token;
+    if (token) {
+      try {
+        await deleteSession(token);
+      } catch {
+        // Best-effort cleanup
+      }
       currentTokenRef.current = null;
     }
     setState(initialState);
-  }, []);
+  }, [state.token]);
 
   const value = {
     ...state,
@@ -170,6 +210,7 @@ export function ScanProvider({ children }) {
     clearError,
     setError,
     startAnalyze,
+    startClean,
     reset,
   };
 

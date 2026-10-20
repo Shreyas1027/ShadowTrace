@@ -25,7 +25,7 @@ def post_analyze():
 
     # 2. Ephemeral session directory creation (FR-UP-10, FR-DL-01..02)
     token = generate_token()
-    token_dir, state = create_session(token, file_bytes)
+    token_dir, state = create_session(token, file_bytes, original_filename=file_storage.filename)
 
     # 3. Metadata extraction (FR-META-01 .. FR-META-10)
     meta_result = extract_metadata(file_bytes, image_info)

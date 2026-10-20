@@ -41,7 +41,7 @@ def get_token_dir(token: str) -> Path:
     return token_dir
 
 
-def create_session(token: str, original_bytes: bytes) -> tuple[Path, dict]:
+def create_session(token: str, original_bytes: bytes, original_filename: str = "image.jpg") -> tuple[Path, dict]:
     """
     Create ephemeral session directory, write original.jpg and state.json.
     Enforces mode 0700/0600 permissions per PRD FR-DL-02.
@@ -67,8 +67,13 @@ def create_session(token: str, original_bytes: bytes) -> tuple[Path, dict]:
     now = datetime.now(timezone.utc)
     expires_at = now + timedelta(seconds=config.TOKEN_TTL_SECONDS)
 
+    clean_filename = Path(original_filename).name if original_filename else "image.jpg"
+    # Basic sanitize
+    clean_filename = re.sub(r'[^A-Za-z0-9_.-]', '_', clean_filename) or "image.jpg"
+
     state = {
         "token": token,
+        "original_filename": clean_filename,
         "created_at": now.isoformat(),
         "expires_at": expires_at.isoformat(),
         "ttl_seconds": config.TOKEN_TTL_SECONDS,
@@ -88,6 +93,69 @@ def create_session(token: str, original_bytes: bytes) -> tuple[Path, dict]:
         pass
 
     return token_dir, state
+
+
+def save_cleaned_image(token: str, cleaned_bytes: bytes, filename: str = None) -> Path:
+    """
+    Save sanitized output file atomically per PRD FR-CLEAN-06.
+    Writes cleaned.jpg and <filename>_clean.jpg inside tmp/<token>/.
+    """
+    token_dir = get_token_dir(token)
+    if not token_dir.exists():
+        raise TokenNotFoundError("Session directory not found.")
+
+    cleaned_file = token_dir / "cleaned.jpg"
+    temp_file = token_dir / "cleaned.tmp"
+
+    with open(temp_file, "wb") as f:
+        f.write(cleaned_bytes)
+
+    os.replace(temp_file, cleaned_file)
+
+    try:
+        os.chmod(cleaned_file, 0o600)
+    except Exception:
+        pass
+
+    # Also save as <filename>_clean.jpg per prompt specification
+    if filename:
+        clean_stem = Path(filename).stem or "image"
+        clean_named_file = token_dir / f"{clean_stem}_clean.jpg"
+        try:
+            with open(clean_named_file, "wb") as f:
+                f.write(cleaned_bytes)
+            os.chmod(clean_named_file, 0o600)
+        except Exception:
+            pass
+
+    return cleaned_file
+
+
+def update_session_state(token: str, updates: dict) -> dict:
+    """Update fields in session state.json atomically."""
+    token_dir = get_token_dir(token)
+    state_file = token_dir / "state.json"
+
+    if not token_dir.exists() or not state_file.exists():
+        raise TokenNotFoundError("Session token not found or already consumed.")
+
+    with open(state_file, "r", encoding="utf-8") as f:
+        state = json.load(f)
+
+    state.update(updates)
+
+    temp_state_file = token_dir / "state.tmp"
+    with open(temp_state_file, "w", encoding="utf-8") as f:
+        json.dump(state, f, indent=2)
+
+    os.replace(temp_state_file, state_file)
+
+    try:
+        os.chmod(state_file, 0o600)
+    except Exception:
+        pass
+
+    return state
 
 
 def get_session(token: str) -> dict:

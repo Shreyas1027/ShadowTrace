@@ -67,6 +67,35 @@ export async function analyzeImage(file) {
 }
 
 /**
+ * POST /api/clean
+ * Strips metadata and verifies sanitized image.
+ */
+export async function cleanImage(token) {
+  if (!token) throw new ApiError('INVALID_TOKEN', 'Token is required to clean metadata', 400);
+  return request('/api/clean', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token }),
+  });
+}
+
+/**
+ * Get direct download URL for sanitized image.
+ */
+export function getDownloadUrl(token) {
+  return `${API_BASE}/api/download/${token}`;
+}
+
+/**
+ * Get metadata-free preview URL.
+ */
+export function getPreviewUrl(token, which = 'original') {
+  return `${API_BASE}/api/preview/${token}/${which}`;
+}
+
+/**
  * GET /api/session/:token
  */
 export async function getSession(token) {
@@ -88,3 +117,4 @@ export async function deleteSession(token) {
     // Best-effort cleanup, ignore failures
   }
 }
+

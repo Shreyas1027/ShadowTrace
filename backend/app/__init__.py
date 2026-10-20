@@ -6,6 +6,9 @@ from app.utils.errors import register_error_handlers
 from app.routes.health import health_bp
 from app.routes.analyze import analyze_bp
 from app.routes.session import session_bp
+from app.routes.clean import clean_bp
+from app.routes.preview import preview_bp
+from app.services.janitor import start_janitor
 
 
 def create_app(config_override=None):
@@ -60,6 +63,11 @@ def create_app(config_override=None):
     # Register blueprints
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(analyze_bp, url_prefix="/api")
+    app.register_blueprint(clean_bp, url_prefix="/api")
+    app.register_blueprint(preview_bp, url_prefix="/api")
     app.register_blueprint(session_bp, url_prefix="/api")
+
+    # Start background janitor
+    start_janitor(app)
 
     return app
