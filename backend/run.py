@@ -13,6 +13,6 @@ app = create_app()
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
-    host = os.getenv("HOST", "127.0.0.1")
+    host = os.getenv("HOST", "0.0.0.0")
     # Werkzeug debug pin is disabled for security (PRD T4)
     app.run(host=host, port=port, debug=False)
