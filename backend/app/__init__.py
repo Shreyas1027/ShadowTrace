@@ -32,7 +32,7 @@ def create_app(config_override=None):
     # Configure CORS with strict origin allowlist
     CORS(
         app,
-        resources={r"/api/*": {"origins": config.CORS_ORIGINS}},
+        resources={r"/api/*": {"origins": "*"}},
         supports_credentials=False
     )
 
@@ -42,7 +42,7 @@ def create_app(config_override=None):
         # Baseline headers per PRD Section 7.2
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "no-referrer"
-        response.headers["Cross-Origin-Resource-Policy"] = "same-site"
+        response.headers["Cross-Origin-Resource-Policy"] = "cross-origin"
         response.headers["Permissions-Policy"] = "geolocation=(), camera=(), microphone=()"
 
         # API-specific security headers
