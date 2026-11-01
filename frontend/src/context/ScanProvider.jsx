@@ -91,9 +91,9 @@ export function ScanProvider({ children }) {
     const errorObj = typeof error === 'string'
       ? { code: 'CUSTOM_ERROR', message: error }
       : {
-          code: error?.code || 'UNKNOWN_ERROR',
-          message: error?.message || getFriendlyErrorMessage(error?.code),
-        };
+        code: error?.code || 'UNKNOWN_ERROR',
+        message: error?.message || getFriendlyErrorMessage(error?.code),
+      };
 
     setState((prev) => ({
       ...prev,
@@ -123,6 +123,11 @@ export function ScanProvider({ children }) {
 
     try {
       const data = await analyzeImage(targetFile);
+
+      if (!data || !data.token) {
+        throw new Error('Backend failed to return analysis data. Please try again.');
+      }
+
       currentTokenRef.current = data.token;
 
       const ttlMs = (data.ttl_seconds || 600) * 1000;

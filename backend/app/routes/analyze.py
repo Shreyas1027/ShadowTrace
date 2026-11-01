@@ -9,6 +9,7 @@ analyze_bp = Blueprint("analyze", __name__)
 
 
 @analyze_bp.route("/analyze", methods=["POST"])
+@analyze_bp.route("/scan", methods=["POST"])
 def post_analyze():
     """
     POST /api/analyze
